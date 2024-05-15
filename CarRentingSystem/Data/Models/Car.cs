@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    using static DataConstanse;
+    using static DataConstantse;
     public class Car
     {
         public int Id { get; init; }
