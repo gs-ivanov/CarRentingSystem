@@ -3,9 +3,11 @@
     using CarRentingSystem.Data;
     using CarRentingSystem.Data.Models;
     using CarRentingSystem.Models.Cars;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using System.Collections.Generic;
+    using System.IO;
+    using FileSystem= System.IO.File;
     using System.Linq;
 
     public class CarsController : Controller
@@ -20,9 +22,24 @@
         public IActionResult Add() => View(new AddCarFormModel { Categories = this.AddCategories() });
 
         [HttpPost]
-        public IActionResult Add(AddCarFormModel car)
+        public IActionResult Add(AddCarFormModel car, IFormFile imagef)  //IEnumerable<IFormFile> image
         {
-            if (this.data.Categories.Any(c=>c.Id==car.CategoryId))
+            if (imagef==null|| imagef.Length>2*1024*1024)
+            {
+                this.ModelState.AddModelError("Imagef", "The Imagef is not valid. It is required and should be less than 2Mb");
+            }
+            /*// 1 st Variant
+                        var imageInMemory = new MemoryStream(); //Otvarqme Memory Stream
+
+                        imagef.CopyTo(imageInMemory);  // Copirame vatre imagef
+
+                        var imageBytes = imageInMemory.ToArray();  // I imame byte masiv
+            */
+            // 2 nd Variant
+
+            imagef.CopyTo(FileSystem.OpenWrite($"C:/Images/{imagef.FileName}"));
+
+            if (this.data.Categories.Any(c => c.Id == car.CategoryId))
             {
                 this.ModelState.AddModelError(nameof(car.CategoryId), "Category does not exists");
             }

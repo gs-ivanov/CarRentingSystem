@@ -6,7 +6,7 @@
 <h1 class="col-6 col-lg-9 text-center" >Add Car</h1>
 <br/>
 
-<form class="col-6 col-lg-9" method="post">
+<form class="col-6 col-lg-9" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Brand"></label>
         <input asp-for="Brand" class="form-control" placeholder="BMW 400, Mercedes, etc..." value="BMW 600">
@@ -42,6 +42,8 @@
         </select>
         <span asp-validation-for="CategoryId" class="small text-danger"></span>
     </div>
+    <input type="file" name="Imagef"/>
+
     <input class="btn btn-primary float-right" type="submit" value="Save"/>
 </form>
 
