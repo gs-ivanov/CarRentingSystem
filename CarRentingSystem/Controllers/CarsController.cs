@@ -22,7 +22,7 @@
         [HttpPost]
         public IActionResult Add(AddCarFormModel car)
         {
-            if (this.data.Categories.Any(c=>c.Id==car.CategoryId))
+            if (!this.data.Categories.Any(c=>c.Id==car.CategoryId))
             {
                 this.ModelState.AddModelError(nameof(car.CategoryId), "Category does not exists");
             }
