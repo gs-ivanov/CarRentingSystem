@@ -31,5 +31,7 @@
         public int CategoryId { get; set; }
 
         public IEnumerable<CarCategoryViewModel> Categories { get; set; }
+    
+        public bool AddCheckMark { get; init; }
     }
 }
