@@ -1,14 +1,45 @@
 ﻿namespace CarRentingSystem.Controllers
 {
     using System.Diagnostics;
+    using System.Linq;
+    using CarRentingSystem.Data;
     using CarRentingSystem.Models;
+    using CarRentingSystem.Models.Cars;
+    using CarRentingSystem.Models.Home;
     using Microsoft.AspNetCore.Mvc;
 
     public class HomeController : Controller
     {
+        private readonly CarRentingDbContext data;
+
+        public HomeController(CarRentingDbContext data)
+        {
+            this.data = data;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var totalCars = this.data.Cars.Count();
+
+            var cars = this.data
+                .Cars
+                .OrderByDescending(c => c.Id)
+                .Select(c => new CarIndexViewModel
+                {
+                    Brand = c.Brand,
+                    Model = c.Model,
+                    Id = c.Id,
+                    ImageUrl = c.ImageUrl,
+                    Year = c.Year,
+                })
+                .Take(3)
+                .ToList();
+            var indexCars = new IndexViewModel
+            {
+                TotalCars = totalCars,
+                Cars = cars
+            };
+            return View(indexCars);
         }
 
         public IActionResult Privacy()
