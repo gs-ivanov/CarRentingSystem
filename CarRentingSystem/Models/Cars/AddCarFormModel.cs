@@ -3,34 +3,36 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    using static CarRentingSystem.Data.DataConstantse;
+    using static CarRentingSystem.Data.DataConstantse.Car;
+    
     public class AddCarFormModel
     {
         [Required]
-        [StringLength(CarBrandMaxLength, MinimumLength = CarBrandMinLength)]
-        public string Brand { get; set; }
+        [StringLength(BrandMaxLength, MinimumLength = BrandMinLength)]
+        public string Brand { get; init; }
 
         [Required]
-        [StringLength(CarModelMaxLength,MinimumLength = CarModelMinLength)]
-        public string Model { get; set; }
+        [StringLength(ModelMaxLength,MinimumLength = ModelMinLength)]
+        public string Model { get; init; }
 
         [Required]
-        [StringLength(int.MaxValue,
-            MinimumLength = CarDescriptionMinLength,
+        [StringLength(
+            int.MaxValue,
+            MinimumLength = DescriptionMinLength,
             ErrorMessage ="The field {0} must be with min length of {2}" )]
-        public string Description { get; set; }
+        public string Description { get; init; }
 
-        [Url]
         [Display(Name = "Image URL")]
-        public string Image { get; set; }
+        [Required]
+        [Url]
+        public string ImageUrl { get; init; }
 
-        [Range(CarYearMinValue, CarYearMaxValue)]
-        public int Year { get; set; }
+        [Range(YearMinValue, YearMaxValue)]
+        public int Year { get; init; }
 
         [Display(Name = "Category")]
-        public int CategoryId { get; set; }
+        public int CategoryId { get; init; }
 
         public IEnumerable<CarCategoryViewModel> Categories { get; set; }
-    
     }
 }
