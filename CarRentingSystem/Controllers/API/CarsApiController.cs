@@ -21,7 +21,7 @@
         {
             var cars=this.data.Cars.ToList();
 
-            if (cars.Any())
+            if (!cars.Any())
             {
                 return NotFound();
             }
