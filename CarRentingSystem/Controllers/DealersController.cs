@@ -33,7 +33,8 @@
 
             if (userIsAlreadydealer)
             {
-                return BadRequest();
+                return RedirectToAction("All", "Cars");
+                //return BadRequest();
             }
 
             if (!ModelState.IsValid)
