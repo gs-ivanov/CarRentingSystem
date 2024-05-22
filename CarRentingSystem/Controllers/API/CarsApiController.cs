@@ -1,10 +1,9 @@
 ﻿namespace CarRentingSystem.Controllers.API
 {
     using CarRentingSystem.Data;
-    using CarRentingSystem.Data.Models;
-    using Microsoft.AspNetCore.Authorization;
+    using CarRentingSystem.Models;
+    using CarRentingSystem.Models.API.Cars;
     using Microsoft.AspNetCore.Mvc;
-    using System.Collections;
     using System.Linq;
 
     [ApiController]
@@ -17,59 +16,52 @@
         => this.data = data;
 
         [HttpGet]
-        public ActionResult<IEnumerable> GetCar()
+        public ActionResult<AllCarsApiResponseModel> AllCars([FromQuery] AllCarsApiRequestModel query)
         {
-            var cars=this.data.Cars.ToList();
+            var carsQuery = this.data.Cars.AsQueryable();
 
-            if (cars.Any())
+            if (!string.IsNullOrWhiteSpace(query.Brand))
             {
-                return NotFound();
+                carsQuery = carsQuery.Where(c => c.Brand == query.Brand);
             }
 
-            return Ok(cars);
-        }
-
-        //[HttpGet]
-        //[Route("{id}")]
-
-        //public object GetDetails(int id)
-        //{
-        //    return id * 5 * 1000;
-        //}
-
-        [HttpGet]
-        [Route("{id}")]
-
-        public IActionResult GetDetails(int id)
-        {
-            var car = this.data.Cars.Find(id);
-
-            if (car==null)
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
             {
-                return NotFound();
+                carsQuery = carsQuery.Where(c =>
+                 (c.Brand + " " + c.Model).ToLower().Contains(query.SearchTerm.ToLower()) ||
+                  c.Description.ToLower().Contains(query.SearchTerm.ToLower()));
             }
 
-            return Ok(car);
+            carsQuery = query.Sorting switch
+            {
+                CarSorting.Year => carsQuery.OrderBy(c => c.Year),
+                CarSorting.BrandAndModel => carsQuery.OrderBy(c => c.Brand).ThenBy(c => c.Model),
+                CarSorting.DateCreated or _ => carsQuery.OrderByDescending(c => c.Id),
+            };
+
+            var totalCars = carsQuery.Count();
+
+            var cars = carsQuery
+                .Skip((query.CurrentPage - 1) * query.CarsPerPage)
+                .Take(query.CarsPerPage)
+                .Select(c => new CarResponseModel
+                {
+                    Id = c.Id,
+                    Brand = c.Brand,
+                    Model = c.Model,
+                    Year = c.Year,
+                    ImageUrl = c.ImageUrl,
+                    Category = c.Category.Name
+                })
+                .ToList();
+
+            return new AllCarsApiResponseModel
+            {
+                CurrentPage = query.CurrentPage,
+                TotalCars = totalCars,
+                Cars = cars
+            };
         }
 
-        //[Authorize]
-        [HttpPost]
-        public IActionResult SaveCar(Car car)
-        {
-            //var carData = new Car
-            //{
-            //    Brand=car.Brand,
-            //    Model=car.Model
-            //};
-
-            return Ok("Good!!!");
-        }
-
-        //[Route("/details")] // /api/cars/datails
-        //[Route("/api/cars/details")] // /api/cars/datails
-        //public IActionResult Post2(Car car)
-        //{
-        //    return View();
-        //}
     }
 }
