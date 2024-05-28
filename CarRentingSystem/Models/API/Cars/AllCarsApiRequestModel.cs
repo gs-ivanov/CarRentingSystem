@@ -1,4 +1,4 @@
-﻿namespace CarRentingSystem.Models.API.Cars
+﻿namespace CarRentingSystem.Models.Api.Cars
 {
     using CarRentingSystem.Models.Cars;
     using System;
@@ -18,8 +18,5 @@
         public int CurrentPage { get; init; } = 1;
 
         public  int CarsPerPage { get; set; } = 10;
-
-        public int TotalCars { get; init; }
-
     }
 }
